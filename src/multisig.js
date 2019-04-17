@@ -184,14 +184,14 @@ async function claimBlankCheck(web3, recipient, blankCheck, approveTx) {
         cardDigests
       )
       .encodeABI()
+
+    const txInfo = {
+      contractAddress: blankCheck.multisigAccount.contractAddress,
+      cashingTransaction: checkCashingTx,
+      approveTransaction: approveTx
+    }
   
-    const checkCashingTxHash = await sponsorCheckCashingWithApproveTx(
-      blankCheck.multisigAccount.contractAddress,
-      checkCashingTx,
-      approveTx
-    )
-  
-    return checkCashingTxHash
+    return txInfo
   }
 
   async function createBlankCheck(web3, multisigAccount, signerAccount, amountInWei, message, sign) {
@@ -230,4 +230,35 @@ async function claimBlankCheck(web3, recipient, blankCheck, approveTx) {
     return blankCheck
   }
 
-module.exports = {createNewMultisigAccount1of1, initZippieMultisigContract, claimBlankCheck, createBlankCheck}
+  async function isBlankCheckCashed(blankCheckData, multisigContractMethods) {
+    // Check if cashed already
+    const isCashed = await multisigContractMethods
+      .usedNonces(blankCheckData.multisigAccount.accountAddress, blankCheckData.check.verificationKey.address)
+      .call()
+  
+    return isCashed
+  }
+
+  async function isBlankCheckCashable(web3, blankCheck, amount) {
+    try {
+      const erc20TokenContract = new web3.eth.Contract(getErc20ContractAbiJson(), {})
+      erc20TokenContract.options.address = blankCheck.multisigAccount.tokenAddress
+      const balance = await erc20TokenContract.methods.balanceOf(blankCheck.multisigAccount.accountAddress).call()
+  
+      const amountBN = web3.utils.toBN(amount)
+      const balanceBN = web3.utils.toBN(balance)
+      return amountBN.lte(balanceBN)
+    } catch (error) {
+      handleError(error)
+      throw error
+    }
+  }
+
+module.exports = {
+  createNewMultisigAccount1of1,
+  initZippieMultisigContract,
+  claimBlankCheck,
+  createBlankCheck,
+  isBlankCheckCashed,
+  isBlankCheckCashable
+}

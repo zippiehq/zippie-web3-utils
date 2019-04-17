@@ -23,6 +23,6 @@
 
 module.exports = {
     token: require('./token'),
-    multisig: require('./multisig')
-
+    multisig: require('./multisig'),
+    utils: require('./utility')
   }

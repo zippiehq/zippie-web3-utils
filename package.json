@@ -1,11 +1,14 @@
 {
   "name": "@zippie/zippie-web3-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility functions for Web3",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-util": "^6.1.0"
+  }
 }
