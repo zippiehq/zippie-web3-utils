@@ -228,6 +228,11 @@ function fromWei(web3, value, decimals) {
     return currentTransactions
   }
 
+  async function getTransactionData(web3, transactionHash) {
+    const txData = await web3.eth.getTransaction(transactionHash)
+    return txData
+  }
+
   async function getBlockData(web3, blockNumber) {
     const blockData = await web3.eth.getBlock(blockNumber)
     return blockData
@@ -240,6 +245,7 @@ function fromWei(web3, value, decimals) {
     getTokenBalance,
     getTokenAllowance,
     getTokenTransactions,
+    getTransactionData,
     getTokenDetails,
     waitForTokenEvent,
    }
