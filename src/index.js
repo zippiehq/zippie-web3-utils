@@ -24,5 +24,7 @@
 module.exports = {
     token: require('./token'),
     multisig: require('./multisig'),
+    wallet_v1: require('./wallet_v1'),
+    wallet_v2: require('./wallet_v2'),
     utils: require('./utility')
   }
