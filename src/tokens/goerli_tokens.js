@@ -1,21 +1,21 @@
-const KOVAN_TOKENS = [
+const GOERLI_TOKENS = [
   {
     symbol: 'ZIPT',
     decimals: '18',
     name: 'Zippie',
-    address: '0x374FaBa19192a123Fbb0c3990e3EeDcFeeaad42A'
+    address: '0xc7f8767144eB23F8Cdc1Df4604A13a4Dd31eB783'
   },
   {
     symbol: 'FANT',
     decimals: '0',
     name: 'Fantti',
-    address: '0x5A32259f5661207935d031C9d5a59571F70B9252',
+    address: '0x5F42f0E8cDe427Fa4299aB3200871e321ca32f0a',
   },
   {
     symbol: 'ATIME',
     decimals: '18',
     name: 'Airtime',
-    address: '0x89E2bb8091232Af7daC4bd473224Ee32AC8147b1',
+    address: '0xA354cF34b9155fE293918Ba2b1e982044b2A1169',
     currency: '*',
     operators: '*'
   },
@@ -23,7 +23,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-USD',
     decimals: '6',
     name: 'Airtime coupons (USD)',
-    address: '0x39bb27B39Ee99C33bdA0B65A1b3065bb6d734F69',
+    address: '0x2AdC128C3ba76dBfC6e42A9C316d586476E48dc4',
     currency: 'USD',
     operators: '*'
   },
@@ -31,7 +31,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-KSH',
     decimals: '6',
     name: 'Airtime coupons (KSH)',
-    address: '0x866e92Ad61B378c12BF1F1faF52Dceb4E071a572',
+    address: '0x8a4575f1cA18E388b4284C98635f3f208C366287',
     currency: 'KES',
     operators: '*'
   },
@@ -39,7 +39,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-XAF',
     decimals: '6',
     name: 'Airtime coupons (XAF)',
-    address: '0xe2586221443CCf2328Eb0DD5537be213BE8a6402',
+    address: '0xA7D82488c67cDA93Eab68f308159166d1B929199',
     currency: 'XAF',
     operators: '*'
   },
@@ -47,7 +47,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-TSH',
     decimals: '6',
     name: 'Airtime coupons (TSH)',
-    address: '0x821540aC740Da118Ce2039a4C3Ce035820104D50',
+    address: '0x9aa424b68075939651dF3b34D6C6883b558Cc571',
     currency: 'TZS',
     operators: '*'
   },
@@ -55,7 +55,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-XOF',
     decimals: '6',
     name: 'Airtime coupons (XOF)',
-    address: '0xB74Dd9da8A84Cf4e01f02F21895CF677D8Cd84C8',
+    address: '0x413cC72EEE03Cc378474a9b837cB9A6Dd1fCbBbd',
     currency: 'XOF',
     operators: '*'
   },
@@ -63,7 +63,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-NGN',
     decimals: '6',
     name: 'Airtime coupons (NGN)',
-    address: '0xAA997960443A38cacfDd790966fc574580517AE8',
+    address: '0x9CbDBE78B91416cf11a6ad4FBE9A63a6E7955711',
     currency: 'NGN',
     operators: '*'
   },
@@ -71,7 +71,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-ZMW',
     decimals: '6',
     name: 'Airtime coupons (ZMW)',
-    address: '0x9e4863dd6EFd417FC279Cc7ee610FA585985b7DC',
+    address: '0x8b85b07A4A6C8040d587b4300D6796899D80C936',
     currency: 'ZMW',
     operators: '*'
   },
@@ -79,7 +79,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-MXN',
     decimals: '6',
     name: 'Airtime coupons (MXN)',
-    address: '0x2aE3436D352E5Db12F89aa106Caa26bCC652FC5a',
+    address: '0xB526553d550d98135016838EcC0EEEc47caF79c7',
     currency: 'MXN',
     operators: '*'
   },
@@ -87,7 +87,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-ARS',
     decimals: '6',
     name: 'Airtime coupons (ARS)',
-    address: '0x846f3D646255C4C9672061c8746033F4Fa091597',
+    address: '0xd8Ea4bb0535f592506FF2C7D26FD081217893398',
     currency: 'ARS',
     operators: '*'
   },
@@ -95,7 +95,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-COP',
     decimals: '6',
     name: 'Airtime coupons (COP)',
-    address: '0xC9aF2b699aE4093A3F7Fc0e13f441DB1493F9Cac',
+    address: '0xEe803fa53964d14eaC763DAeB1839DC1846fAf93',
     currency: 'COP',
     operators: '*'
   },
@@ -103,7 +103,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-PEN',
     decimals: '6',
     name: 'Airtime coupons (PEN)',
-    address: '0x63740e77a7a75b3bC97EE721d8208e46622A9246',
+    address: '0xDDf3B740098B8902FC7827b114b07b0402E9C2E8',
     currency: 'PEN',
     operators: '*'
   },
@@ -111,7 +111,7 @@ const KOVAN_TOKENS = [
     symbol: 'AIRTIME-BRL',
     decimals: '6',
     name: 'Airtime coupons (BRL)',
-    address: '0x36784AA35d3E312B014bc24902398c96F01C265d',
+    address: '0xB7935754D4D0106Cc8C15766E50440C2aC29138E',
     currency: 'BRL',
     operators: '*'
   }
