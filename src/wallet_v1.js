@@ -50,7 +50,7 @@ async function createAccount(
     dappUri,
   ) {
   // Generate temp private key (account)
-  const account = web3.eth.accounts.create(Web3.utils.randomHex(32))
+  const account = web3.eth.accounts.create(web3.utils.randomHex(32))
 
   // Set erc20 token address
   const erc20TokenContract = new web3.eth.Contract(erc20_abi, tokenAddress)
@@ -117,7 +117,7 @@ async function createAccount(
 
 function createBlankCheck(web3, account, amount, message) {
   // Generate new unique verification key
-  const verificationKey = web3.eth.accounts.create(Web3.utils.randomHex(32))
+  const verificationKey = web3.eth.accounts.create(web3.utils.randomHex(32))
 
   // Create blank check hash to be signed by signers
   const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', amount, verificationKey.address)

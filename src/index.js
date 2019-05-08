@@ -23,6 +23,7 @@
 
 module.exports = {
     token: require('./token'),
+    token_abi: require('./contracts/erc20ContractAbi'),
     multisig: require('./multisig'),
     wallet_v1: require('./wallet_v1'),
     wallet_v1_abi: require('./contracts/zippieWalletContractAbi_v1'),
