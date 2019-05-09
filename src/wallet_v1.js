@@ -70,7 +70,7 @@ async function createAccount(
   // TODO: create multiple transactions for different gasPrice & also with higher gas limit than gas estimate
   const signedApproveTransaction = await web3.eth.accounts.signTransaction(
     {
-      to: contractAddress,
+      to: tokenAddress,
       data: approveTransaction,
       value: 0,
       gasPrice: 2000000000,
