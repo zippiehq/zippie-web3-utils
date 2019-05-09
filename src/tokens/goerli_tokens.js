@@ -114,5 +114,17 @@ const GOERLI_TOKENS = [
     address: '0xB7935754D4D0106Cc8C15766E50440C2aC29138E',
     currency: 'BRL',
     operators: '*'
+  },
+  {
+    symbol: 'IC',
+    decimals: '6',
+    name: 'Impact Coupon',
+    address: '0x6e21fD50412577dca23b32A81b7ca1EBc712dce1',
+  },
+  {
+    symbol: 'MUS',
+    decimals: '0',
+    name: 'Musanga',
+    address: '0x42FE079b2b9184fAEDd43C4BdbbF891F25DF504b',
   }
 ]
