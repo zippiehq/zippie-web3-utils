@@ -116,6 +116,22 @@ const GOERLI_TOKENS = [
     operators: '*'
   },
   {
+    symbol: 'AIRTIME-RUB',
+    decimals: '6',
+    name: 'Airtime coupons (RUB)',
+    address: '0x9596E9A6f2Ed1fDC171E91f2e40906C8d1d30134',
+    currency: 'RUB',
+    operators: '*'
+  },
+  {
+    symbol: 'AIRTIME-PHP',
+    decimals: '6',
+    name: 'Airtime coupons (PHP)',
+    address: '0x70643804f3669B5d32d45340a433B5cdE1DF6e9f',
+    currency: 'PHP',
+    operators: '*'
+  },
+  {
     symbol: 'IC',
     decimals: '6',
     name: 'Impact Coupon',
@@ -126,5 +142,5 @@ const GOERLI_TOKENS = [
     decimals: '0',
     name: 'Musanga',
     address: '0x42FE079b2b9184fAEDd43C4BdbbF891F25DF504b',
-  }
+  },
 ]
