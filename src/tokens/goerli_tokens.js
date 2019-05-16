@@ -144,3 +144,5 @@ const GOERLI_TOKENS = [
     address: '0x42FE079b2b9184fAEDd43C4BdbbF891F25DF504b',
   },
 ]
+
+module.exports = GOERLI_TOKENS

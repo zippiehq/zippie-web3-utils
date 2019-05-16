@@ -116,3 +116,5 @@ const KOVAN_TOKENS = [
     operators: '*'
   }
 ]
+
+module.exports = KOVAN_TOKENS
