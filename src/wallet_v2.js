@@ -37,7 +37,7 @@
  * This license applies to this entire compilation.
  */
 
-const { wallet_abi_v2 } = require('./contracts/zippieWalletContractAbi_v2.js')
+const { wallet_abi_v2, redeemBlankCheck_abi_v2, redeemBlankCheck_signature_v2 } = require('./contracts/zippieWalletContractAbi_v2.js')
 const { getAbiParameterArrayEncodePacked } = require('./utility.js')
 
 function getAccountAddress(web3, signers, m, contractAddress) {
@@ -169,6 +169,17 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   return redeemBlankCheckTx
 }
 
+async function getTransactionData(web3, transactionHash) {
+  const txData = await web3.eth.getTransaction(transactionHash)
+
+  const params = web3.eth.abi.decodeParameters(
+    redeemBlankCheck_abi_v2,
+    txData.input.slice(redeemBlankCheck_signature_v2.length)
+  )
+
+  return params
+}
+
 module.exports = {
   getAccountAddress,
   getAccount,
@@ -177,4 +188,5 @@ module.exports = {
   addSignerSignatureToBlankCheck,
   addCardSignatureToBlankCheck,
   redeemBlankCheck,
+  getTransactionData
 }
