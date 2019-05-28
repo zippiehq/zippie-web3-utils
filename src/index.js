@@ -23,6 +23,7 @@
 
 module.exports = {
     token: require('./token'),
+    token_erc721: require('./token_erc721'),
     tokens: {kovan: require('./tokens/kovan_tokens'), goerli: require('./tokens/goerli_tokens')},
     token_abi: require('./contracts/erc20ContractAbi'),
     multisig: require('./multisig'),
@@ -30,5 +31,7 @@ module.exports = {
     wallet_v1_abi: require('./contracts/zippieWalletContractAbi_v1'),
     wallet_v2: require('./wallet_v2'),
     wallet_v2_abi: require('./contracts/zippieWalletContractAbi_v2'),
+    wallet_v2_erc721: require('./wallet_v2_erc721'),
+    wallet_v2_abi_erc721: require('./contracts/zippieWalletErc721ContractAbi_v2'),
     utils: require('./utility')
   }
