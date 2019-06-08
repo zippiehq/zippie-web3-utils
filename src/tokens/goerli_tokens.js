@@ -142,18 +142,24 @@ const GOERLI_TOKENS = [
     decimals: '0',
     name: 'Musanga',
     address: '0x42FE079b2b9184fAEDd43C4BdbbF891F25DF504b',
+    currency: 'ZMW',
+    operators: '*'
   },
   {
     symbol: 'AFRI',
     decimals: '2',
     name: 'AfriDelivery',
     address: '0xdF75F9630b3c47e1271EB0Ae6e62B3B82b76c3aE',
+    currency: 'ZMW',
+    operators: '*'
   },
   {
     symbol: 'TIGMOO',
     decimals: '2',
     name: 'Tigmoo',
     address: '0x24Ef6e7A11D03ABC088147148046966390AF7820',
+    currency: 'ZMW',
+    operators: '*'
   },
 ]
 
