@@ -41,31 +41,10 @@ async function getTokenAllowance(web3, tokenAddress, accountAddress, contractAdd
  * @returns Value in ETH
  */
 function fromWei(web3, value, decimals) {
-    if (decimals === '0') {
-      return web3.utils.fromWei(value, 'wei')
-    } else if (decimals === '3') {
-      return web3.utils.fromWei(value, 'kwei')
-    } else if (decimals === '6') {
-      return web3.utils.fromWei(value, 'mwei')
-    } else if (decimals === '9') {
-      return web3.utils.fromWei(value, 'gwei')
-    } else if (decimals === '12') {
-      return web3.utils.fromWei(value, 'nanoether')
-    } else if (decimals === '15') {
-      return web3.utils.fromWei(value, 'microether')
-    } else if (decimals === '18') {
-      return web3.utils.fromWei(value, 'ether')
-    } else if (decimals === '21') {
-      return web3.utils.fromWei(value, 'kether')
-    } else if (decimals === '24') {
-      return web3.utils.fromWei(value, 'mether')
-    } else if (decimals === '27') {
-      return web3.utils.fromWei(value, 'gether')
-    } else if (decimals === '30') {
-      return web3.utils.fromWei(value, 'tether')
-    } else {
-      return 0
-    }
+    const divisor = web3.utils.toBN("10").pow(web3.utils.toBN(decimals))
+    const integerValue = web3.utils.toBN(value).div(divisor)
+    const decimalValue = web3.utils.toBN(value).sub(integerValue.mul(divisor))
+    return `${integerValue.toString()}.${decimalValue.toString()}`
   }
   
   /**
@@ -76,31 +55,15 @@ function fromWei(web3, value, decimals) {
    * @returns value in Wei
    */
   function toWei(web3, value, decimals) {
-    if (decimals === '0') {
-      return web3.utils.toWei(value, 'wei')
-    } else if (decimals === '3') {
-      return web3.utils.toWei(value, 'kwei')
-    } else if (decimals === '6') {
-      return web3.utils.toWei(value, 'mwei')
-    } else if (decimals === '9') {
-      return web3.utils.toWei(value, 'gwei')
-    } else if (decimals === '12') {
-      return web3.utils.toWei(value, 'nanoether')
-    } else if (decimals === '15') {
-      return Web3.utils.toWei(value, 'microether')
-    } else if (decimals === '18') {
-      return web3.utils.toWei(value, 'ether')
-    } else if (decimals === '21') {
-      return web3.utils.toWei(value, 'kether')
-    } else if (decimals === '24') {
-      return web3.utils.toWei(value, 'mether')
-    } else if (decimals === '27') {
-      return web3.utils.toWei(value, 'gether')
-    } else if (decimals === '30') {
-      return web3.utils.toWei(value, 'tether')
-    } else {
-      return 0
+    let decimalsInValue = 0
+    if (value.indexOf(".") !== -1) {
+      decimalsInValue = value.length - value.indexOf(".") - 1 
+      if (decimalsInValue > parseInt(decimals)) {
+        return "0"
+      }
     }
+    return web3.utils.toBN(value.replace(".", "")).mul(web3.utils.toBN("10").pow(web3.utils.toBN(decimals-decimalsInValue))).toString()
+  
   }
 
   /**
