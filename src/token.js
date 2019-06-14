@@ -44,6 +44,9 @@ function fromWei(web3, value, decimals) {
     const divisor = web3.utils.toBN("10").pow(web3.utils.toBN(decimals))
     const integerValue = web3.utils.toBN(value).div(divisor)
     const decimalValue = web3.utils.toBN(value).sub(integerValue.mul(divisor))
+    if (decimalValue.toString() === "0" ) {
+      return `${integerValue.toString()}`
+    }
     return `${integerValue.toString()}.${decimalValue.toString()}`
   }
   
