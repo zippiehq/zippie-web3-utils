@@ -41,13 +41,19 @@ async function getTokenAllowance(web3, tokenAddress, accountAddress, contractAdd
  * @returns Value in ETH
  */
 function fromWei(web3, value, decimals) {
+    const re = RegExp(/^[0-9]+$/)
+    if (!re.test(value)) {
+      throw new Error('Invalid value')
+    }
+
     const divisor = web3.utils.toBN("10").pow(web3.utils.toBN(decimals))
     const integerValue = web3.utils.toBN(value).div(divisor)
     const decimalValue = web3.utils.toBN(value).sub(integerValue.mul(divisor))
-    if (decimalValue.toString() === "0" ) {
+    const decimalValueWithPadding = web3.utils.padLeft(decimalValue.toString(), decimals, "0")
+    if (decimalValueWithPadding.toString() === "0" ) {
       return `${integerValue.toString()}`
     }
-    return `${integerValue.toString()}.${decimalValue.toString()}`
+    return `${integerValue.toString()}.${decimalValueWithPadding.toString()}`
   }
   
   /**
@@ -58,6 +64,11 @@ function fromWei(web3, value, decimals) {
    * @returns value in Wei
    */
   function toWei(web3, value, decimals) {
+    const re = RegExp(/^[0-9]+\.?[0-9]*$/)
+    if (!re.test(value)) {
+      throw new Error('Invalid value')
+    }
+    
     let decimalsInValue = 0
     if (value.indexOf(".") !== -1) {
       decimalsInValue = value.length - value.indexOf(".") - 1 
