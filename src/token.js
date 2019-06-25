@@ -43,7 +43,10 @@ async function getTokenAllowance(web3, tokenAddress, accountAddress, contractAdd
 function fromWei(web3, value, decimals) {
     const re = RegExp(/^[0-9]+$/)
     if (!re.test(value)) {
-      throw new Error('Invalid value')
+      const reHex = RegExp(/^0x[0-9,a-f]+$/)
+      if (!reHex.test(value)) {
+        throw new Error('Invalid value')
+      }
     }
 
     const divisor = web3.utils.toBN("10").pow(web3.utils.toBN(decimals))
@@ -68,7 +71,7 @@ function fromWei(web3, value, decimals) {
     if (!re.test(value)) {
       throw new Error('Invalid value')
     }
-    
+
     let decimalsInValue = 0
     if (value.indexOf(".") !== -1) {
       decimalsInValue = value.length - value.indexOf(".") - 1 
