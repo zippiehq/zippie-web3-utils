@@ -37,7 +37,7 @@
  * This license applies to this entire compilation.
  */
 
-const reward_token_abi = [
+const internal_token_abi = [
   {
     constant: true,
     inputs: [],
@@ -71,6 +71,20 @@ const reward_token_abi = [
         type: 'bool'
       }
     ],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'addWhitelisted',
+    outputs: [],
     payable: false,
     stateMutability: 'nonpayable',
     type: 'function'
@@ -117,6 +131,20 @@ const reward_token_abi = [
     type: 'function'
   },
   {
+    constant: false,
+    inputs: [
+      {
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'removeWhitelisted',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
     constant: true,
     inputs: [],
     name: 'decimals',
@@ -145,12 +173,31 @@ const reward_token_abi = [
     name: 'increaseAllowance',
     outputs: [
       {
-        name: 'success',
+        name: '',
         type: 'bool'
       }
     ],
     payable: false,
     stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'isWhitelisted',
+    outputs: [
+      {
+        name: '',
+        type: 'bool'
+      }
+    ],
+    payable: false,
+    stateMutability: 'view',
     type: 'function'
   },
   {
@@ -166,11 +213,11 @@ const reward_token_abi = [
     constant: false,
     inputs: [
       {
-        name: 'to',
+        name: 'account',
         type: 'address'
       },
       {
-        name: 'value',
+        name: 'amount',
         type: 'uint256'
       }
     ],
@@ -207,7 +254,7 @@ const reward_token_abi = [
     constant: false,
     inputs: [
       {
-        name: 'value',
+        name: 'amount',
         type: 'uint256'
       }
     ],
@@ -237,6 +284,15 @@ const reward_token_abi = [
     type: 'function'
   },
   {
+    constant: false,
+    inputs: [],
+    name: 'renounceWhitelistAdmin',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
     constant: true,
     inputs: [],
     name: 'paused',
@@ -263,7 +319,7 @@ const reward_token_abi = [
     constant: true,
     inputs: [
       {
-        name: 'owner',
+        name: 'account',
         type: 'address'
       }
     ],
@@ -291,11 +347,25 @@ const reward_token_abi = [
     constant: false,
     inputs: [
       {
-        name: 'from',
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'addWhitelistAdmin',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: 'account',
         type: 'address'
       },
       {
-        name: 'value',
+        name: 'amount',
         type: 'uint256'
       }
     ],
@@ -408,7 +478,7 @@ const reward_token_abi = [
     name: 'decreaseAllowance',
     outputs: [
       {
-        name: 'success',
+        name: '',
         type: 'bool'
       }
     ],
@@ -456,6 +526,34 @@ const reward_token_abi = [
     ],
     payable: false,
     stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'isWhitelistAdmin',
+    outputs: [
+      {
+        name: '',
+        type: 'bool'
+      }
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: 'renounceWhitelisted',
+    outputs: [],
+    payable: false,
+    stateMutability: 'nonpayable',
     type: 'function'
   },
   {
@@ -513,6 +611,54 @@ const reward_token_abi = [
     payable: false,
     stateMutability: 'nonpayable',
     type: 'constructor'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'WhitelistedAdded',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'WhitelistedRemoved',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'WhitelistAdminAdded',
+    type: 'event'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: 'account',
+        type: 'address'
+      }
+    ],
+    name: 'WhitelistAdminRemoved',
+    type: 'event'
   },
   {
     anonymous: false,
@@ -650,5 +796,5 @@ const reward_token_abi = [
 ]
 
 module.exports = {
-  reward_token_abi
+  internal_token_abi
 }
