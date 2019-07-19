@@ -97,6 +97,21 @@ function createBlankCheck(web3, account, ledger, tokenAddress, amount, message) 
   return blankCheck
 }
 
+function addItemToBlankCheck(blankCheck, amount, message, timestamp) {
+  if(!timestamp) {
+    const now = new Date()
+    timestamp = now.getTime() / 1000
+  }
+
+  if(blankCheck.check.items) {
+    blankCheck.check.items.push({amount, message, timestamp})
+  } else {
+    blankCheck.check.items = [{amount, message, timestamp}]
+  }
+
+  return blankCheck
+}
+
 async function signBlankCheck(web3, blankCheck, signerPrivateKey) {
   // Sign blank check hash
   const signature = web3.eth.accounts.sign(blankCheck.check.hash, signerPrivateKey)
@@ -184,6 +199,7 @@ module.exports = {
   getAccountAddress,
   getAccount,
   createBlankCheck,
+  addItemToBlankCheck,
   signBlankCheck,
   addSignerSignatureToBlankCheck,
   addCardSignatureToBlankCheck,
