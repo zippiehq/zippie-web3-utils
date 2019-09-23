@@ -184,6 +184,11 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   return redeemBlankCheckTx
 }
 
+function decodeRedeemBlankCheckParameters(web3, redeemBlankCheckTx) {
+  const params = web3.eth.abi.decodeParameters(redeemBlankCheck_abi_v2, '0x' + redeemBlankCheckTx.slice(redeemBlankCheck_signature_v2.length))
+  return params
+}
+
 async function getTransactionData(web3, transactionHash) {
   const txData = await web3.eth.getTransaction(transactionHash)
 
@@ -214,6 +219,7 @@ module.exports = {
   addSignerSignatureToBlankCheck,
   addCardSignatureToBlankCheck,
   redeemBlankCheck,
+  decodeRedeemBlankCheckParameters,
   getTransactionData,
   isBlankCheckRedeemed
 }
