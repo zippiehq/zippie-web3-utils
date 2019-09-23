@@ -21,6 +21,18 @@ async function getTokenBalance(web3, tokenAddress, accountAddress) {
  * 
  * @param {*} web3 
  * @param {*} tokenAddress 
+ * @param {*} tokenId 
+ */
+async function getTokenOwner(web3, tokenAddress, tokenId) {
+  const contract = getTokenContract(web3, tokenAddress)
+  const owner = await contract.methods.ownerOf(tokenId).call()
+  return owner.toLowerCase()
+}
+
+/**
+ * 
+ * @param {*} web3 
+ * @param {*} tokenAddress 
  * @param {*} accountAddress 
  * @param {*} index 
  */
@@ -29,6 +41,7 @@ async function getTokenOfOwnerByIndex(web3, tokenAddress, accountAddress, index)
   const tokenId = await contract.methods.tokenOfOwnerByIndex(accountAddress, index).call()
   return tokenId
 }
+
 
 /**
  * 
@@ -64,6 +77,7 @@ async function getTokenDetails(web3, tokenAddress) {
 module.exports = {
   getTokenContract,
   getTokenBalance,
+  getTokenOwner,
   getTokenOfOwnerByIndex,
   getTokenAllowance,
   getTokenDetails,
