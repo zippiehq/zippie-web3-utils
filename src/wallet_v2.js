@@ -97,16 +97,16 @@ function createBlankCheck(web3, account, ledger, tokenAddress, amount, message) 
   return blankCheck
 }
 
-function addItemToBlankCheck(blankCheck, amount, message, timestamp) {
+function addItemToBlankCheck(blankCheck, amount, message, timestamp, metadata) {
   if(!timestamp) {
     const now = new Date()
     timestamp = now.getTime() / 1000
   }
 
   if(blankCheck.check.items) {
-    blankCheck.check.items.push({amount, message, timestamp})
+    blankCheck.check.items.push({amount, message, timestamp, metadata})
   } else {
-    blankCheck.check.items = [{amount, message, timestamp}]
+    blankCheck.check.items = [{amount, message, timestamp, metadata}]
   }
 
   return blankCheck
