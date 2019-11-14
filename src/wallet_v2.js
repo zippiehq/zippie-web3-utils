@@ -75,7 +75,7 @@ function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddr
   return account
 }
 
-function createBlankCheck(web3, account, ledger, tokenAddress, amount, message) {
+function createBlankCheck(web3, account, ledger, tokenAddress, amount, message, metadata) {
   // Generate new unique verification key
   const verificationKey = web3.eth.accounts.create(web3.utils.randomHex(32))
 
@@ -91,6 +91,7 @@ function createBlankCheck(web3, account, ledger, tokenAddress, amount, message) 
       amount: amount,
       message: message,
       verificationKey: { address: verificationKey.address, privateKey: verificationKey.privateKey },
+      metadata: metadata,
     },
   }
 
