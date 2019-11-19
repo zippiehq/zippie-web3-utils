@@ -37,5 +37,6 @@ module.exports = {
     reward_token_erc20_factory_abi: require('./contracts/zippieRewardTokenERC20FactoryAbi'),
     internal_token_erc20_abi: require('./contracts/zippieInternalTokenERC20Abi'),
     poll: require('./poll'),
-    utils: require('./utility')
+    utils: require('./utility'),
+    token_engine: require('./tokenEngine')
   }
