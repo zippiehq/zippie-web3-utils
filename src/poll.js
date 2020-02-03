@@ -21,7 +21,7 @@ async function sync() {
         try {
             const block = await __web3.eth.getBlock('latest')
         } catch(error) {
-
+            reconnect()
         }
 
         await timeout(__interval)
@@ -34,4 +34,11 @@ function timeout (duration) {
     })
   }
 
-  module.exports = {setup, start, stop}
+function reconnect () {
+    if(__web3.currentProvider.connected === false) {
+        const wsProvider = new __web3.providers.WebsocketProvider(__web3.currentProvider.connection._url)
+        __web3.setProvider(wsProvider)
+    }
+}
+
+module.exports = {setup, start, stop}
