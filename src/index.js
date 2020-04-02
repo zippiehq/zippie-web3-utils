@@ -39,4 +39,6 @@ module.exports = {
     poll: require('./poll'),
     utils: require('./utility'),
     token_engine: require('./tokenEngine')
+    ens: require('./ens'),
+    ens_abi: require('./contracts/ensAbi'),
   }
