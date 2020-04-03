@@ -76,6 +76,36 @@ async function setContenthash(web3, ensRegistryAddress, ownerAddress, ensName, c
   })
 }
 
+async function fifsRegister(web3, fifsRegistryAddress, ownerAddress, ensName) {
+  const ensRegistry = new web3.eth.Contract(
+    ens_abi.fifs_registrar_abi,
+    fifsRegistryAddress,
+  )
+
+  return new Promise(async (resolve, reject) => {
+    publicResolver.methods
+      .register(namehash.hash(ensName), ownerAddress)
+      .send({
+        from: ownerAddress,
+        gas: '300000', // XXX Calc gas
+        gasPrice: '1000000000', // 1 gwei
+      })
+      .once('transactionHash', hash => {
+        console.log(hash)
+      })
+      .once('receipt', function(receipt) {
+        console.log(receipt)
+        resolve(receipt)
+      })
+      .on('error', function(error) {
+        console.log(error)
+        reject(error)
+      })
+  })
+}
+
+
 module.exports = {
-  setContenthash
+  setContenthash,
+  fifsRegister
 }
