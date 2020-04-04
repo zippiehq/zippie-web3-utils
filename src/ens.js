@@ -42,18 +42,34 @@ const contentHash = require('content-hash')
 const ens_abi = require('./contracts/ensAbi')
 
 async function setContenthash(web3, ensRegistryAddress, ownerAddress, ensName, contentCodec, contentValue) {
+  console.log('balance is ' + await web3.eth.getBalance(ownerAddress))
+  console.log('chainid is '  + await web3.eth.getChainId())
+  console.log('netnid is '  + await web3.eth.net.getId())
+
   const ensRegistry = new web3.eth.Contract(
     ens_abi.ens_registry_abi,
     ensRegistryAddress,
   )
-
+    
+  
+  const owner = await ensRegistry.methods.owner(namehash.hash(ensName)).call()
+  if (owner !== ownerAddress) {
+     console.log('We are not the owner of this domain')
+     throw new Error('Not owner')
+  }
+  
   const resolverAddres = await ensRegistry.methods.resolver(namehash.hash(ensName)).call()
+  
+  if (resolverAddres === '0x0000000000000000000000000000000000000000') {
+     console.log('Cannot set content hash, missing resolver')
+     throw new Error('No resolver address')
+  }  
 
   const publicResolver = new web3.eth.Contract(
     ens_abi.public_resolver_abi,
     resolverAddres,
   )
-
+  
   return new Promise(async (resolve, reject) => {
     publicResolver.methods
       .setContenthash(namehash.hash(ensName), '0x' + contentHash.encode(contentCodec, contentValue))
@@ -76,19 +92,48 @@ async function setContenthash(web3, ensRegistryAddress, ownerAddress, ensName, c
   })
 }
 
-async function fifsRegister(web3, fifsRegistryAddress, ownerAddress, ensName) {
-  const ensRegistry = new web3.eth.Contract(
-    ens_abi.fifs_registrar_abi,
-    fifsRegistryAddress,
-  )
-
-  return new Promise(async (resolve, reject) => {
-    publicResolver.methods
-      .register(namehash.hash(ensName), ownerAddress)
+async function fifsRegister(web3, fifsRegistryAddress, ownerAddress, ensName) {  
+  return new Promise((resolve, reject) => {
+    const ensRegistry = new web3.eth.Contract(
+      ens_abi.fifs_registrar_abi,
+      fifsRegistryAddress,
+    )
+    console.log({fifsRegistryAddress, ownerAddress, ensName})    
+    ensRegistry.methods
+      .register(web3.utils.keccak256(ensName.split('.')[0]), ownerAddress)
       .send({
         from: ownerAddress,
-        gas: '300000', // XXX Calc gas
+        gas: 300000, // XXX Calc gas
         gasPrice: '1000000000', // 1 gwei
+        value: 0
+      })
+      .once('transactionHash', hash => {
+        console.log(hash)
+      })
+      .once('receipt', function(receipt) {
+        console.log(receipt)
+        resolve(receipt)
+      })
+      .on('error', function(error) {
+        console.log(error)
+        reject(error)
+      })
+  })
+}
+
+async function setResolver(web3, ensRegistryAddress, ownerAddress, ensName, resolver) {  
+  return new Promise((resolve, reject) => {
+    const ensRegistry = new web3.eth.Contract(
+      ens_abi.ens_registry_abi,
+      ensRegistryAddress,
+    )
+    ensRegistry.methods
+      .setResolver(namehash.hash(ensName), resolver)
+      .send({
+        from: ownerAddress,
+        gas: 300000, // XXX Calc gas
+        gasPrice: '1000000000', // 1 gwei
+        value: 0
       })
       .once('transactionHash', hash => {
         console.log(hash)
@@ -107,5 +152,6 @@ async function fifsRegister(web3, fifsRegistryAddress, ownerAddress, ensName) {
 
 module.exports = {
   setContenthash,
-  fifsRegister
+  fifsRegister,
+  setResolver
 }
