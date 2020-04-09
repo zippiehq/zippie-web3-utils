@@ -33,6 +33,8 @@ module.exports = {
     wallet_v2_abi: require('./contracts/zippieWalletContractAbi_v2'),
     wallet_v2_erc721: require('./wallet_v2_erc721'),
     wallet_v2_abi_erc721: require('./contracts/zippieWalletErc721ContractAbi_v2'),
+    wallet_v3: require('./wallet_v3'),
+    wallet_v3_abi: require('./contracts/zippieWalletContractAbi_v3'),
     reward_token_erc20_abi: require('./contracts/zippieRewardTokenERC20Abi'),
     reward_token_erc20_factory_abi: require('./contracts/zippieRewardTokenERC20FactoryAbi'),
     internal_token_erc20_abi: require('./contracts/zippieInternalTokenERC20Abi'),
