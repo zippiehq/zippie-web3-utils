@@ -1,6 +1,6 @@
 {
   "name": "@zippie/zippie-web3-utils",
-  "version": "0.0.26",
+  "version": "0.0.28",
   "description": "Utility functions for Web3",
   "main": "src/index.js",
   "scripts": {
