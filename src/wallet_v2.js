@@ -131,6 +131,8 @@ function addCardSignatureToBlankCheck(blankCheck, nonce, r, s, v) {
   return blankCheck
 }
 
+let multisigContractCache = {}
+
 function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   // Destruct blankCheck obj
   const sender = blankCheck.multisigAccount
@@ -177,7 +179,14 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
     }
   }
 
-  const multisigContract = new web3.eth.Contract(wallet_abi_v2, sender.contractAddress)
+  let multisigContract
+  
+  if (multisigContractCache[sender.contractAddress]) {
+     multisigContract = multisigContractCache[sender.contractAddress]
+  } else {
+     multisigContract = multisigContractCache[sender.contractAddress] = new web3.eth.Contract(wallet_abi_v2, sender.contractAddress, {})
+  }
+
   const redeemBlankCheckTx = multisigContract.methods
     .redeemBlankCheck(addresses, signers, m, v, r, s, amount, cardNonces)
     .encodeABI()
@@ -201,7 +210,6 @@ async function getTransactionData(web3, transactionHash) {
   return params
 }
 
-let multisigContractCache = {}
 
 async function isBlankCheckRedeemed(web3, contractAddress, senderAccountAddress, verificationKeyAddress) {
 
