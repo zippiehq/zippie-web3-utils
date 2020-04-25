@@ -201,9 +201,18 @@ async function getTransactionData(web3, transactionHash) {
   return params
 }
 
-async function isBlankCheckRedeemed(web3, contractAddress, senderAccountAddress, verificationKeyAddress) {
-  const multisigContract = new web3.eth.Contract(wallet_abi_v2, contractAddress, {})
+let multisigContractCache = {}
 
+async function isBlankCheckRedeemed(web3, contractAddress, senderAccountAddress, verificationKeyAddress) {
+
+  let multisigContract
+  
+  if (multisigContractCache[contractAddress]) {
+     multisigContract = multisigContractCache[contractAddress]
+  } else {
+     multisigContract = multisigContractCache[contractAddress] = new web3.eth.Contract(wallet_abi_v2, contractAddress, {})
+  }
+  
   const isCashed = await multisigContract.methods
     .usedNonces(senderAccountAddress, verificationKeyAddress)
     .call()
