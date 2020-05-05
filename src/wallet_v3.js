@@ -98,6 +98,28 @@ function createBlankCheck(web3, account, ledger, tokenAddress, amount, message, 
   return blankCheck
 }
 
+function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, amount, message, metadata, verificationKey) {
+  const vKey = web3.eth.accounts.create(verificationKey)
+
+  // Create blank check hash to be signed by signers
+  const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', tokenAddress, amount, vKey.address)
+
+  const blankCheck = {
+    multisigAccount: account,
+    check: {
+      ledger: ledger,
+      hash: blankCheckHash,
+      token: tokenAddress,
+      amount: amount,
+      message: message,
+      verificationKey: { address: vKey.address, privateKey: vKey.privateKey },
+      metadata: metadata,
+    },
+  }
+
+  return blankCheck
+}
+
 function addItemToBlankCheck(blankCheck, amount, message, timestamp, metadata) {
   if(!timestamp) {
     const now = new Date()
@@ -236,5 +258,6 @@ module.exports = {
   redeemBlankCheck,
   decodeRedeemBlankCheckParameters,
   getTransactionData,
-  isBlankCheckRedeemed
+  isBlankCheckRedeemed,
+  createBlankCheckChosenPrivkey
 }
