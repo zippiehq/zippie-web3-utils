@@ -41,6 +41,35 @@ const namehash = require('eth-ens-namehash')
 const contentHash = require('content-hash')
 const ens_abi = require('./contracts/ensAbi')
 
+
+async function getContenthashCID(web3, ensRegistryAddress, ensName) {
+  console.log('chainid is '  + await web3.eth.getChainId())
+  console.log('netnid is '  + await web3.eth.net.getId())
+  
+  const ensRegistry = new web3.eth.Contract(
+    ens_abi.ens_registry_abi,
+    ensRegistryAddress,
+  )
+
+  const resolverAddres = await ensRegistry.methods.resolver(namehash.hash(ensName)).call()
+  
+  if (resolverAddres === '0x0000000000000000000000000000000000000000') {
+     console.log('Cannot get content hash, missing resolver')
+     throw new Error('No resolver address')
+  }
+  
+  const publicResolver = new web3.eth.Contract(
+    ens_abi.public_resolver_abi,
+    resolverAddres,
+  )
+  
+  const chash = await publicResolver.methods.contenthash(namehash.hash(namehash.normalize(ensName))).call()
+  if (contentHash.getCodec(chash) !== 'ipfs-ns') {
+     throw new Error('not a ipfs-ns content hash')
+  }
+  return contentHash.decode(chash)
+}
+
 async function setContenthash(web3, ensRegistryAddress, ownerAddress, ensName, contentCodec, contentValue) {
   console.log('balance is ' + await web3.eth.getBalance(ownerAddress))
   console.log('chainid is '  + await web3.eth.getChainId())
@@ -152,6 +181,7 @@ async function setResolver(web3, ensRegistryAddress, ownerAddress, ensName, reso
 
 module.exports = {
   setContenthash,
+  getContenthashCID,
   fifsRegister,
   setResolver
 }
