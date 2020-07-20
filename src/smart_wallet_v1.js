@@ -210,6 +210,33 @@ function decodeRedeemBlankCheckToMerchant(web3, encodedTx) {
 	return params
 }
 
+function decodeEventTransferB2B(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferB2B',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
+function decodeEventTransferC2B(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferC2B',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
+function decodeEventTransferB2C(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferB2C',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
 module.exports = {
 	getAccountAddress,
 	checkMerchantRegistryPermissions,
@@ -224,4 +251,7 @@ module.exports = {
 	decodeMetaTxTransferB2B,
 	decodeMetaTxTransferB2C,
 	decodeRedeemBlankCheckToMerchant,
+	decodeEventTransferB2B,
+	decodeEventTransferC2B,
+	decodeEventTransferB2C,
 }
