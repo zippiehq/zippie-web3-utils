@@ -43,6 +43,7 @@ const { zippie_smart_wallet_abi } = require('./contracts/zippieSmartWalletErc20A
 
 let merchantRegistryContractCache = {}
 let merchantOwnerContractCache = {}
+let smartWalletContractCache = {}
 
 function getMerchantRegistryContract(web3, contractAddress) {
 	let merchantRegistryContract
@@ -66,6 +67,18 @@ function getMerchantOwnerContract(web3, contractAddress) {
 	}
 	
 	return merchantOwnerContract
+}
+
+function getSmartWalletContract(web3, contractAddress) {
+	let smartWalletContract
+  
+  if (smartWalletContractCache[contractAddress]) {
+		smartWalletContract = smartWalletContractCache[contractAddress]
+  } else {
+		smartWalletContract = smartWalletContractCache[contractAddress] = new web3.eth.Contract(zippie_smart_wallet_abi, contractAddress, {})
+	}
+	
+	return smartWalletContract
 }
 
 function getAccountAddress(web3, merchantId, orderId, walletAddress) {
@@ -156,6 +169,20 @@ function encodeMetaTxTransferB2C(web3, merchantOwnerContractAddress, smartWallet
 	return encodedTx
 }
 
+function encodeRedeemBlankCheckToMerchant(web3, smartWalletContractAddress, zippieWalletContractAddress, blankCheck, receipientMerchantId, recipientOrderId) {
+	const smartWalletContract = getSmartWalletContract(web3, smartWalletContractAddress)
+
+  const encodedTx = smartWalletContract.methods
+	.redeemBlankCheckToMerchant(
+		blankCheck,
+		receipientMerchantId,
+		recipientOrderId,
+		zippieWalletContractAddress,
+	).encodeABI()
+	
+	return encodedTx
+}
+
 function decodeMetaTxTransferB2B(web3, encodedMetaTx) {
   const inputTypes = zippie_merchant_owner_abi.find(
     (item) => item.name === 'transferB2B',
@@ -174,6 +201,42 @@ function decodeMetaTxTransferB2C(web3, encodedMetaTx) {
 	return params
 }
 
+function decodeRedeemBlankCheckToMerchant(web3, encodedTx) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'redeemBlankCheckToMerchant',
+  ).inputs
+
+	const params = web3.eth.abi.decodeParameters(inputTypes, encodedTx.slice(10))
+	return params
+}
+
+function decodeEventTransferB2B(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferB2B',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
+function decodeEventTransferC2B(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferC2B',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
+function decodeEventTransferB2C(web3, data, topics) {
+  const inputTypes = zippie_smart_wallet_abi.find(
+    (item) => item.name === 'TransferB2C',
+  ).inputs
+
+	const params = web3.eth.abi.decodeLog(inputTypes, data, topics.slice(1))
+	return params
+}
+
 module.exports = {
 	getAccountAddress,
 	checkMerchantRegistryPermissions,
@@ -184,6 +247,11 @@ module.exports = {
 	recoverMetaTx,
 	encodeMetaTxTransferB2B,
 	encodeMetaTxTransferB2C,
+	encodeRedeemBlankCheckToMerchant,
 	decodeMetaTxTransferB2B,
 	decodeMetaTxTransferB2C,
+	decodeRedeemBlankCheckToMerchant,
+	decodeEventTransferB2B,
+	decodeEventTransferC2B,
+	decodeEventTransferB2C,
 }
