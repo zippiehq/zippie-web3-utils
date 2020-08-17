@@ -98,11 +98,11 @@ function createBlankCheck(web3, account, ledger, tokenAddress, tokenId, message,
   return blankCheck
 }
 
-function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, amount, message, metadata, verificationKey) {
+function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, tokenId, message, metadata, verificationKey) {
   const vKey = web3.eth.accounts.create(verificationKey)
 
   // Create blank check hash to be signed by signers
-  const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', tokenAddress, amount, vKey.address)
+  const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', tokenAddress, tokenId, vKey.address)
 
   const blankCheck = {
     multisigAccount: account,
