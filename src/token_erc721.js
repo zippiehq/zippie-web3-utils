@@ -10,7 +10,7 @@ function getTokenContract(web3, tokenAddress) {
  * @param {*} accountAddress 
  * @param {*} tokenAddress 
  */
-async function getTokenBalance(web3, tokenAddress, accountAddress) {
+async function getTokenBalance(web3, accountAddress, tokenAddress) {
     const contract = getTokenContract(web3, tokenAddress)
     const balance = await contract.methods.balanceOf(accountAddress).call()
 
@@ -74,6 +74,19 @@ async function getTokenDetails(web3, tokenAddress) {
   }
 }
 
+/**
+ * 
+ * @param {*} web3 
+ * @param {*} tokenAddress 
+ * @returns {address, name, symbol, decimals}
+ */
+async function getTokenURI(web3, tokenAddress, tokenId) {
+  const erc721TokenContract = getTokenContract(web3, tokenAddress)
+  const uri = await erc721TokenContract.methods.tokenURI(tokenId).call()
+
+  return uri
+}
+
 module.exports = {
   getTokenContract,
   getTokenBalance,
@@ -81,4 +94,5 @@ module.exports = {
   getTokenOfOwnerByIndex,
   getTokenAllowance,
   getTokenDetails,
-  }
+  getTokenURI,
+}
