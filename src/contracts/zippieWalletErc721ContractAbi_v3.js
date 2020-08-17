@@ -39,140 +39,150 @@
 
 const wallet_abi_v3 = [
   {
-    constant: false,
     inputs: [
       {
-        name: 'addresses',
-        type: 'address[]'
-      },
-      {
-        name: 'signers',
-        type: 'address[]'
-      },
-      {
-        name: 'm',
-        type: 'uint8[]'
-      },
-      {
-        name: 'v',
-        type: 'uint8[]'
-      },
-      {
-        name: 'r',
-        type: 'bytes32[]'
-      },
-      {
-        name: 's',
-        type: 'bytes32[]'
-      },
-      {
-        name: 'tokenId',
-        type: 'uint256'
-      },
-      {
-        name: 'cardNonces',
-        type: 'bytes32[]'
-      }
-    ],
-    name: 'redeemBlankCheck',
-    outputs: [
-      {
-        name: '',
-        type: 'bool'
-      }
-    ],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function'
-  },
-  {
-    inputs: [
-      {
+        internalType: 'address',
         name: 'zippieCardNonces',
-        type: 'address'
-      }
+        type: 'address',
+      },
     ],
-    payable: false,
     stateMutability: 'nonpayable',
-    type: 'constructor'
+    type: 'constructor',
   },
   {
-    constant: true,
     inputs: [
       {
+        internalType: 'bytes32',
         name: 'salt',
-        type: 'bytes32'
-      }
+        type: 'bytes32',
+      },
     ],
     name: 'getAccountAddress',
     outputs: [
       {
+        internalType: 'address',
         name: '',
-        type: 'address'
-      }
+        type: 'address',
+      },
     ],
-    payable: false,
     stateMutability: 'view',
-    type: 'function'
+    type: 'function',
+    constant: true,
   },
   {
-    constant: true,
     inputs: [
       {
+        internalType: 'address',
         name: '',
-        type: 'address'
+        type: 'address',
       },
       {
+        internalType: 'address',
         name: '',
-        type: 'address'
-      }
+        type: 'address',
+      },
     ],
     name: 'usedNonces',
     outputs: [
       {
+        internalType: 'address',
         name: '',
-        type: 'bool'
-      }
+        type: 'address',
+      },
     ],
-    payable: false,
     stateMutability: 'view',
-    type: 'function'
-  }
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'addresses',
+        type: 'address[]',
+      },
+      {
+        internalType: 'address[]',
+        name: 'signers',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint8[]',
+        name: 'm',
+        type: 'uint8[]',
+      },
+      {
+        internalType: 'uint8[]',
+        name: 'v',
+        type: 'uint8[]',
+      },
+      {
+        internalType: 'bytes32[]',
+        name: 'r',
+        type: 'bytes32[]',
+      },
+      {
+        internalType: 'bytes32[]',
+        name: 's',
+        type: 'bytes32[]',
+      },
+      {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32[]',
+        name: 'cardNonces',
+        type: 'bytes32[]',
+      },
+    ],
+    name: 'redeemBlankCheck',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
 ]
 
 const redeemBlankCheck_abi_v3 = [
   {
     name: 'addresses',
-    type: 'address[]'
+    type: 'address[]',
   },
   {
     name: 'signers',
-    type: 'address[]'
+    type: 'address[]',
   },
   {
     name: 'm',
-    type: 'uint8[]'
+    type: 'uint8[]',
   },
   {
     name: 'v',
-    type: 'uint8[]'
+    type: 'uint8[]',
   },
   {
     name: 'r',
-    type: 'bytes32[]'
+    type: 'bytes32[]',
   },
   {
     name: 's',
-    type: 'bytes32[]'
+    type: 'bytes32[]',
   },
   {
     name: 'tokenId',
-    type: 'uint256'
+    type: 'uint256',
   },
   {
     name: 'cardNonces',
-    type: 'bytes32[]'
-  }
+    type: 'bytes32[]',
+  },
 ]
 
 const redeemBlankCheck_signature_v3 = '0xf8010960'
