@@ -37,158 +37,85 @@
  * This license applies to this entire compilation.
  */
 
-const wallet_abi_v3 = [
+const zippie_token_factory_abi = [
   {
+    anonymous: false,
     inputs: [
       {
+        indexed: false,
         internalType: 'address',
-        name: 'zippieCardNonces',
+        name: 'addr',
         type: 'address',
       },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'creator',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'admin',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'symbol',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'decimals',
+        type: 'uint8',
+      },
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    name: 'TokenDeployedERC20',
+    type: 'event',
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'salt',
-        type: 'bytes32',
-      },
-    ],
-    name: 'getAccountAddress',
-    outputs: [
-      {
         internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
+        name: 'admin',
         type: 'address',
       },
       {
         internalType: 'address',
-        name: '',
+        name: 'operator',
         type: 'address',
       },
-    ],
-    name: 'usedNonces',
-    outputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'symbol',
+        type: 'string',
+      },
+      {
+        internalType: 'uint8',
+        name: 'decimals',
+        type: 'uint8',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: 'addresses',
-        type: 'address[]',
-      },
-      {
-        internalType: 'address[]',
-        name: 'signers',
-        type: 'address[]',
-      },
-      {
-        internalType: 'uint8[]',
-        name: 'm',
-        type: 'uint8[]',
-      },
-      {
-        internalType: 'uint8[]',
-        name: 'v',
-        type: 'uint8[]',
-      },
-      {
-        internalType: 'bytes32[]',
-        name: 'r',
-        type: 'bytes32[]',
-      },
-      {
-        internalType: 'bytes32[]',
-        name: 's',
-        type: 'bytes32[]',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32[]',
-        name: 'cardNonces',
-        type: 'bytes32[]',
-      },
-    ],
-    name: 'redeemBlankCheck',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
+    name: 'deployToken',
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
 ]
-
-const redeemBlankCheck_abi_v3 = [
-  {
-    name: 'addresses',
-    type: 'address[]',
-  },
-  {
-    name: 'signers',
-    type: 'address[]',
-  },
-  {
-    name: 'm',
-    type: 'uint8[]',
-  },
-  {
-    name: 'v',
-    type: 'uint8[]',
-  },
-  {
-    name: 'r',
-    type: 'bytes32[]',
-  },
-  {
-    name: 's',
-    type: 'bytes32[]',
-  },
-  {
-    name: 'tokenId',
-    type: 'uint256',
-  },
-  {
-    name: 'cardNonces',
-    type: 'bytes32[]',
-  },
-]
-
-const redeemBlankCheck_signature_v3 = '0xf8010960'
 
 module.exports = {
-  wallet_abi_v3,
-  redeemBlankCheck_abi_v3,
-  redeemBlankCheck_signature_v3,
+  zippie_token_factory_abi,
 }
