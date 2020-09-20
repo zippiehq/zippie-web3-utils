@@ -41,6 +41,16 @@ const namehash = require('eth-ens-namehash')
 const contentHash = require('content-hash')
 const ens_abi = require('./contracts/ensAbi')
 
+function encodeContentHash(contentCodec, contentValue) {
+  return '0x' + contentHash.encode(contentCodec, contentValue)
+}
+
+function decodeContentHash(contentHashValue) {
+  const codec = contentHash.getCodec(contentHashValue) 
+  const decoded = contentHash.decode(contentHashValue)
+  return { codec, decoded }
+}
+
 
 async function getContenthashCID(web3, ensRegistryAddress, ensName) {
   console.log('chainid is '  + await web3.eth.getChainId())
@@ -178,10 +188,41 @@ async function setResolver(web3, ensRegistryAddress, ownerAddress, ensName, reso
   })
 }
 
+async function setResolverAuthorisation(web3, ensResolverAddress, ownerAddress, ensName, operator, isAuthorised) {  
+  return new Promise((resolve, reject) => {
+    const ensRegistry = new web3.eth.Contract(
+      ens_abi.public_resolver_abi,
+      ensResolverAddress,
+    )
+    ensRegistry.methods
+      .setAuthorisation(namehash.hash(ensName), operator, isAuthorised)
+      .send({
+        from: ownerAddress,
+        gas: 300000, // XXX Calc gas
+        gasPrice: '1000000000', // 1 gwei
+        value: 0
+      })
+      .once('transactionHash', hash => {
+        console.log(hash)
+      })
+      .once('receipt', function(receipt) {
+        console.log(receipt)
+        resolve(receipt)
+      })
+      .on('error', function(error) {
+        console.log(error)
+        reject(error)
+      })
+  })
+}
+
 
 module.exports = {
+  encodeContentHash,
+  decodeContentHash,
   setContenthash,
   getContenthashCID,
   fifsRegister,
-  setResolver
+  setResolver,
+  setResolverAuthorisation
 }
