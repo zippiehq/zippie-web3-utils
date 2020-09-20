@@ -41,6 +41,10 @@ const namehash = require('eth-ens-namehash')
 const contentHash = require('content-hash')
 const ens_abi = require('./contracts/ensAbi')
 
+function getNameHash(ensName) {
+  return namehash.hash(ensName)
+}
+
 function encodeContentHash(contentCodec, contentValue) {
   return '0x' + contentHash.encode(contentCodec, contentValue)
 }
@@ -218,6 +222,7 @@ async function setResolverAuthorisation(web3, ensResolverAddress, ownerAddress, 
 
 
 module.exports = {
+  getNameHash,
   encodeContentHash,
   decodeContentHash,
   setContenthash,
