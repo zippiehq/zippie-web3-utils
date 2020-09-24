@@ -682,6 +682,57 @@ const zippie_merchant_owner_abi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'ensResolver',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'ensNode',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes',
+        name: 'contentHash',
+        type: 'bytes',
+      },
+      {
+        components: [
+          {
+            internalType: 'uint8',
+            name: 'v',
+            type: 'uint8',
+          },
+          {
+            internalType: 'bytes32',
+            name: 'r',
+            type: 'bytes32',
+          },
+          {
+            internalType: 'bytes32',
+            name: 's',
+            type: 'bytes32',
+          },
+        ],
+        internalType: 'struct ZippieMerchantOwner.Signature',
+        name: 'signature',
+        type: 'tuple',
+      },
+    ],
+    name: 'updateEnsContentHash',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
 ]
 
 module.exports = {

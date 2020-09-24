@@ -128,8 +128,9 @@ async function checkMerchantOwnerPermissions(web3, contractAddress, accountAddre
   const hasPermissionB2B = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("transferB2B"), accountAddress).call()
   const hasPermissionB2C = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("transferB2C"), accountAddress).call()
   const hasPermissionMintToken = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("mintToken"), accountAddress).call()
+  const hasPermissionAdminENS = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("adminENS"), accountAddress).call()
 
-  return { isAdmin, hasPermissionB2B, hasPermissionB2C, hasPermissionMintToken }
+  return { isAdmin, hasPermissionB2B, hasPermissionB2C, hasPermissionMintToken, hasPermissionAdminENS }
 }
 
 function createMetaTxTransferB2B(web3, token, senderMerchant, senderOrderId, recipientMerchant, recipientOrderId, amount) {
@@ -163,9 +164,15 @@ function createMetaTxMintToken(web3, token, recipient, amount) {
 }
 
 function createMetaTxMintToken_ERC721(web3, token, recipient, tokenId, tokenURI) {
-		// XXX: Add nonce
+	// XXX: Add nonce
 	const hash = web3.utils.soliditySha3('mintToken_ERC721', token, recipient, tokenId, tokenURI)
 	return { token, recipient, tokenId, tokenURI, hash }
+}
+
+function createMetaTxUpdateEnsContentHash(web3, ensResolver, ensNode, contentHash) {
+	// XXX: Add nonce
+	const hash = web3.utils.soliditySha3('updateEnsContentHash', ensResolver, ensNode, contentHash)
+	return { ensResolver, ensNode, contentHash, hash }
 }
 
 function encodeMetaTxTransferB2B(web3, merchantOwnerContractAddress, smartWalletContractAddress, metaTx) {
@@ -303,6 +310,20 @@ function encodeMetaTxMintToken_ERC721(web3, merchantOwnerContractAddress, metaTx
 	return encodedTx
 }
 
+function encodeMetaTxUpdateEnsContentHash(web3, merchantOwnerContractAddress, metaTx) {
+	const merchantOwnerContract = getMerchantOwnerContract(web3, merchantOwnerContractAddress)
+
+	const encodedTx = merchantOwnerContract.methods
+	.updateEnsContentHash(
+		metaTx.ensResolver,  
+		metaTx.ensNode, 
+		metaTx.contentHash,
+		metaTx.signature
+	).encodeABI()
+
+	return encodedTx
+}
+
 function decodeMetaTxTransferB2B(web3, encodedMetaTx) {
   const inputTypes = zippie_merchant_owner_abi.find(
     (item) => item.name === 'transferB2B',
@@ -375,6 +396,15 @@ function decodeMetaTxMintToken_ERC721(web3, encodedMetaTx) {
 	return params
 }
 
+function decodeMetaTxUpdateEnsContentHash(web3, encodedMetaTx) {
+  const inputTypes = zippie_merchant_owner_abi.find(
+    (item) => item.name === 'updateEnsContentHash',
+  ).inputs
+
+	const params = web3.eth.abi.decodeParameters(inputTypes, encodedMetaTx.slice(10))
+	return params
+}
+
 function decodeEventTransferB2B(web3, data, topics) {
   const inputTypes = zippie_smart_wallet_abi.find(
     (item) => item.name === 'TransferB2B',
@@ -423,6 +453,7 @@ module.exports = {
 	createMetaTxTransferB2C_ERC721,
 	createMetaTxMintToken,
 	createMetaTxMintToken_ERC721,
+	createMetaTxUpdateEnsContentHash,
 	encodeMetaTxTransferB2B,
 	encodeMetaTxTransferB2C,
 	encodeMetaTxTransferB2B_ERC721,
@@ -431,6 +462,7 @@ module.exports = {
 	encodeRedeemBlankCheckToMerchant_ERC721,
 	encodeMetaTxMintToken,
 	encodeMetaTxMintToken_ERC721,
+	encodeMetaTxUpdateEnsContentHash,
 	decodeMetaTxTransferB2B,
 	decodeMetaTxTransferB2C,
 	decodeMetaTxTransferB2B_ERC721,
@@ -439,6 +471,7 @@ module.exports = {
 	decodeRedeemBlankCheckToMerchant_ERC721,
 	decodeMetaTxMintToken,
 	decodeMetaTxMintToken_ERC721,
+	decodeMetaTxUpdateEnsContentHash,
 	decodeEventTransferB2B,
 	decodeEventTransferC2B,
 	decodeEventTransferB2C,
