@@ -129,8 +129,9 @@ async function checkMerchantOwnerPermissions(web3, contractAddress, accountAddre
   const hasPermissionB2C = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("transferB2C"), accountAddress).call()
   const hasPermissionMintToken = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("mintToken"), accountAddress).call()
   const hasPermissionAdminENS = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("adminENS"), accountAddress).call()
+  const hasPermissionApproveTransfer = await merchantOwnerContract.methods.hasRole(web3.utils.sha3("approveTransfer"), accountAddress).call()
 
-  return { isAdmin, hasPermissionB2B, hasPermissionB2C, hasPermissionMintToken, hasPermissionAdminENS }
+  return { isAdmin, hasPermissionB2B, hasPermissionB2C, hasPermissionMintToken, hasPermissionAdminENS, hasPermissionApproveTransfer }
 }
 
 function createMetaTxTransferB2B(web3, token, senderMerchant, senderOrderId, recipientMerchant, recipientOrderId, amount) {
