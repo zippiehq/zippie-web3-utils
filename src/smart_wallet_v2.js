@@ -169,6 +169,18 @@ function createMetaTxMintToken_ERC721(web3, token, recipient, tokenId, tokenURI)
 	return { token, recipient, tokenId, tokenURI, hash }
 }
 
+function createMetaTxApproveTransferFrom_ERC721(web3, token, from, to, tokenId, metadata) {
+	// XXX: Add nonce
+	const hash = web3.utils.soliditySha3('approveTransferFrom_ERC721', token, from, to, tokenId, metadata)
+	return { token, from, to, tokenId, metadata, hash }
+}
+
+function createMetaTxRejectTransferFrom_ERC721(web3, token, from, to, tokenId, metadata) {
+	// XXX: Add nonce
+	const hash = web3.utils.soliditySha3('rejectTransferFrom_ERC721', token, from, to, tokenId, metadata)
+	return { token, from, to, tokenId, metadata, hash }
+}
+
 function createMetaTxUpdateEnsContentHash(web3, ensResolver, ensNode, contentHash) {
 	// XXX: Add nonce
 	const hash = web3.utils.soliditySha3('updateEnsContentHash', ensResolver, ensNode, contentHash)
@@ -310,6 +322,38 @@ function encodeMetaTxMintToken_ERC721(web3, merchantOwnerContractAddress, metaTx
 	return encodedTx
 }
 
+function encodeMetaTxApproveTransferFrom_ERC721(web3, merchantOwnerContractAddress, metaTx) {
+	const merchantOwnerContract = getMerchantOwnerContract(web3, merchantOwnerContractAddress)
+
+	const encodedTx = merchantOwnerContract.methods
+	.approveTransferFrom_ERC721(
+		metaTx.token,  
+		metaTx.from,
+		metaTx.to, 
+		metaTx.tokenId,
+		metaTx.metadata,
+		metaTx.signature
+	).encodeABI()
+
+	return encodedTx
+}
+
+function encodeMetaTxRejectTransferFrom_ERC721(web3, merchantOwnerContractAddress, metaTx) {
+	const merchantOwnerContract = getMerchantOwnerContract(web3, merchantOwnerContractAddress)
+
+	const encodedTx = merchantOwnerContract.methods
+	.rejectTransferFrom_ERC721(
+		metaTx.token,  
+		metaTx.from,
+		metaTx.to, 
+		metaTx.tokenId,
+		metaTx.metadata,
+		metaTx.signature
+	).encodeABI()
+
+	return encodedTx
+}
+
 function encodeMetaTxUpdateEnsContentHash(web3, merchantOwnerContractAddress, metaTx) {
 	const merchantOwnerContract = getMerchantOwnerContract(web3, merchantOwnerContractAddress)
 
@@ -396,6 +440,25 @@ function decodeMetaTxMintToken_ERC721(web3, encodedMetaTx) {
 	return params
 }
 
+function decodeMetaTxApproveTransferFrom_ERC721(web3, encodedMetaTx) {
+  const inputTypes = zippie_merchant_owner_abi.find(
+    (item) => item.name === 'approveTransferFrom_ERC721',
+  ).inputs
+
+	const params = web3.eth.abi.decodeParameters(inputTypes, encodedMetaTx.slice(10))
+	return params
+}
+
+function decodeMetaTxRejectTransferFrom_ERC721(web3, encodedMetaTx) {
+  const inputTypes = zippie_merchant_owner_abi.find(
+    (item) => item.name === 'rejectTransferFrom_ERC721',
+  ).inputs
+
+	const params = web3.eth.abi.decodeParameters(inputTypes, encodedMetaTx.slice(10))
+	return params
+}
+
+
 function decodeMetaTxUpdateEnsContentHash(web3, encodedMetaTx) {
   const inputTypes = zippie_merchant_owner_abi.find(
     (item) => item.name === 'updateEnsContentHash',
@@ -453,6 +516,8 @@ module.exports = {
 	createMetaTxTransferB2C_ERC721,
 	createMetaTxMintToken,
 	createMetaTxMintToken_ERC721,
+	createMetaTxApproveTransferFrom_ERC721,
+	createMetaTxRejectTransferFrom_ERC721,
 	createMetaTxUpdateEnsContentHash,
 	encodeMetaTxTransferB2B,
 	encodeMetaTxTransferB2C,
@@ -462,6 +527,8 @@ module.exports = {
 	encodeRedeemBlankCheckToMerchant_ERC721,
 	encodeMetaTxMintToken,
 	encodeMetaTxMintToken_ERC721,
+	encodeMetaTxApproveTransferFrom_ERC721,
+	encodeMetaTxRejectTransferFrom_ERC721,
 	encodeMetaTxUpdateEnsContentHash,
 	decodeMetaTxTransferB2B,
 	decodeMetaTxTransferB2C,
@@ -471,6 +538,8 @@ module.exports = {
 	decodeRedeemBlankCheckToMerchant_ERC721,
 	decodeMetaTxMintToken,
 	decodeMetaTxMintToken_ERC721,
+	decodeMetaTxApproveTransferFrom_ERC721,
+	decodeMetaTxRejectTransferFrom_ERC721,
 	decodeMetaTxUpdateEnsContentHash,
 	decodeEventTransferB2B,
 	decodeEventTransferC2B,
