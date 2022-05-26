@@ -37,17 +37,26 @@
  * This license applies to this entire compilation.
  */
 
-const { wallet_abi_v3, redeemBlankCheck_abi_v3, redeemBlankCheck_signature_v3 } = require('./contracts/zippieWalletContractAbi_v3.js')
-const { getAbiParameterArrayEncodePacked } = require('./utility.js')
+const ethers = require("ethers");
+
+const abi = [
+  // Read-Only Functions
+  "function usedNonces(address, address) view returns(address)",
+
+  // Authenticated Functions
+  "function redeemBlankCheck(address[] memory addresses, address[] memory signers, uint8[] memory m, uint8[] memory v, bytes32[] memory r, bytes32[] memory s, uint256 amount, bytes32[] memory cardNonces) public returns (bool)",
+
+  // Events
+];
 
 function getAccountAddress(web3, signers, m, contractAddress) {
   // XXX can we get bytecode from chain instead or pass a param?
   const accountBytecode = "0x608060405234801561001057600080fd5b50600080546001600160a01b03191633179055610171806100326000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063daea85c514610030575b600080fd5b6100566004803603602081101561004657600080fd5b50356001600160a01b0316610058565b005b6000546001600160a01b0316331461006f57600080fd5b60408051600160e01b63095ea7b3028152336004820152600019602482015290516001600160a01b0383169163095ea7b39160448083019260209291908290030181600087803b1580156100c257600080fd5b505af11580156100d6573d6000803e3d6000fd5b505050506040513d60208110156100ec57600080fd5b50516101425760408051600160e51b62461bcd02815260206004820152600e60248201527f417070726f7665206661696c6564000000000000000000000000000000000000604482015290519081900360640190fd5b32fffea165627a7a7230582032c59f0247a959ee08569c8456e1b35a213a36088625adeb369ffa1a46228e3e0029"
-	const bytecodeHash = web3.utils.sha3(accountBytecode)
-  const salt = web3.utils.soliditySha3('0x' + getAbiParameterArrayEncodePacked(web3, signers) + getAbiParameterArrayEncodePacked(web3, m))
-	const accountHash = web3.utils.sha3(`0x${'ff'}${contractAddress.slice(2)}${salt.slice(2)}${bytecodeHash.slice(2)}`)
+  const bytecodeHash = ethers.utils.keccak256(accountBytecode)
+	const salt = ethers.utils.solidityKeccak256(['address[]', 'uint8[]'], [signers, m]) 
+	const accountHash = ethers.utils.keccak256(`0x${'ff'}${contractAddress.slice(2)}${salt.slice(2)}${bytecodeHash.slice(2)}`)
 	const accountAddress = `0x${accountHash.slice(-40)}`.toLowerCase()
-	return accountAddress
+	return ethers.utils.getAddress(accountAddress)
 }
 
 function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddress) {
@@ -77,10 +86,10 @@ function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddr
 
 function createBlankCheck(web3, account, ledger, tokenAddress, amount, message, metadata) {
   // Generate new unique verification key
-  const verificationKey = web3.eth.accounts.create(web3.utils.randomHex(32))
+  const verificationKey = ethers.Wallet.createRandom()
 
   // Create blank check hash to be signed by signers
-  const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', tokenAddress, amount, verificationKey.address)
+  const blankCheckHash = ethers.utils.solidityKeccak256(['string','address','uint256','address'],['redeemBlankCheck', tokenAddress, amount, verificationKey.address])
 
   const blankCheck = {
     multisigAccount: account,
@@ -99,10 +108,10 @@ function createBlankCheck(web3, account, ledger, tokenAddress, amount, message, 
 }
 
 function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, amount, message, metadata, verificationKey) {
-  const vKey = web3.eth.accounts.create(verificationKey)
+  const vKey = ethers.Wallet(verificationKey)
 
   // Create blank check hash to be signed by signers
-  const blankCheckHash = web3.utils.soliditySha3('redeemBlankCheck', tokenAddress, amount, vKey.address)
+  const blankCheckHash = ethers.utils.solidityKeccak256(['string','address','uint256','address'],['redeemBlankCheck', tokenAddress, amount, vKey.address])
 
   const blankCheck = {
     multisigAccount: account,
@@ -120,29 +129,6 @@ function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, amou
   return blankCheck
 }
 
-function addItemToBlankCheck(blankCheck, amount, message, timestamp, metadata) {
-  if(!timestamp) {
-    const now = new Date()
-    timestamp = now.getTime() / 1000
-  }
-
-  if(blankCheck.check.items) {
-    blankCheck.check.items.push({amount, message, timestamp, metadata})
-  } else {
-    blankCheck.check.items = [{amount, message, timestamp, metadata}]
-  }
-
-  return blankCheck
-}
-
-async function signBlankCheck(web3, blankCheck, signerPrivateKey) {
-  // Sign blank check hash
-  const signature = web3.eth.accounts.sign(blankCheck.check.hash, signerPrivateKey)
-
-  // Add signature
-  return addSignerSignatureToBlankCheck(blankCheck, signature.r, signature.s, web3.utils.hexToNumber(signature.v))
-}
-
 function addSignerSignatureToBlankCheck(blankCheck, r, s, v) {
   blankCheck.signatures = { r: r, s: s, v: v }
   return blankCheck
@@ -153,9 +139,7 @@ function addCardSignatureToBlankCheck(blankCheck, nonce, r, s, v) {
   return blankCheck
 }
 
-let multisigContractCache = {}
-
-function redeemBlankCheck(web3, blankCheck, recipientAddress) {
+async function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   // Destruct blankCheck obj
   const sender = blankCheck.multisigAccount
   const check = blankCheck.check
@@ -163,9 +147,11 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   const cardSignatures = blankCheck.cardSignatures
 
   // Sign this recipient address hash with verification key
-  const recipientHash = web3.utils.soliditySha3(recipientAddress)
+  const recipientHash = ethers.utils.solidityKeccak256(['address'],[recipientAddress])
   const verificationPrivateKey = check.verificationKey.privateKey
-  const signedRecipientHash = web3.eth.accounts.sign(recipientHash, verificationPrivateKey)
+  const verificationKeySigner = new ethers.Wallet(verificationPrivateKey)
+  const recipientSignature = await verificationKeySigner.signMessage(ethers.utils.arrayify(recipientHash))
+  const signedRecipientHash = ethers.utils.splitSignature(recipientSignature)
 
   // redeemBlankCheck(address[] memory addresses, address[] memory signers, uint8[] memory m, uint8[] memory v, bytes32[] memory r, bytes32[] memory s, uint256 amount, bytes32[] memory cardNonces)
   const addresses = [
@@ -177,7 +163,7 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
   const m = sender.m
   const r = [signedRecipientHash.r.valueOf()]
   const s = [signedRecipientHash.s.valueOf()]
-  const v = [web3.utils.hexToNumber(signedRecipientHash.v)]
+  const v = [signedRecipientHash.v]
   const amount = check.amount
   const cardNonces = []
 
@@ -200,50 +186,24 @@ function redeemBlankCheck(web3, blankCheck, recipientAddress) {
       cardNonces.push(cardSignatures.nonce)
     }
   }
-
-  if (multisigContractCache[sender.contractAddress]) {
-     multisigContract = multisigContractCache[sender.contractAddress]
-  } else {
-     multisigContract = multisigContractCache[sender.contractAddress] = new web3.eth.Contract(wallet_abi_v3, sender.contractAddress, {})
-  }
-
-  const redeemBlankCheckTx = multisigContract.methods
-    .redeemBlankCheck(addresses, signers, m, v, r, s, amount, cardNonces)
-    .encodeABI()
-
-  return redeemBlankCheckTx
+  
+  const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+  const multisigContract = new ethers.Contract(sender.contractAddress, abi, provider);
+  const redeemBlankCheckTx = await multisigContract.populateTransaction.redeemBlankCheck(addresses, signers, m, v, r, s, amount, cardNonces)
+  return redeemBlankCheckTx.data
 }
 
 function decodeRedeemBlankCheckParameters(web3, redeemBlankCheckTx) {
-  const params = web3.eth.abi.decodeParameters(redeemBlankCheck_abi_v3, '0x' + redeemBlankCheckTx.slice(redeemBlankCheck_signature_v3.length))
-  return params
-}
-
-async function getTransactionData(web3, transactionHash) {
-  const txData = await web3.eth.getTransaction(transactionHash)
-
-  const params = web3.eth.abi.decodeParameters(
-    redeemBlankCheck_abi_v3,
-    txData.input.slice(redeemBlankCheck_signature_v3.length)
-  )
-
+  const iface = new ethers.utils.Interface(abi)
+  const params = iface.decodeFunctionData("redeemBlankCheck", redeemBlankCheckTx)
   return params
 }
 
 
 async function isBlankCheckRedeemed(web3, contractAddress, senderAccountAddress, verificationKeyAddress) {
-  let multisigContract
-  
-  if (multisigContractCache[contractAddress]) {
-     multisigContract = multisigContractCache[contractAddress]
-  } else {
-     multisigContract = multisigContractCache[contractAddress] = new web3.eth.Contract(wallet_abi_v3, contractAddress, {})
-  }
-
-  const recipientAddress = await multisigContract.methods
-    .usedNonces(senderAccountAddress, verificationKeyAddress)
-    .call()
-    
+  const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+  const multisigContract = new ethers.Contract(contractAddress, abi, provider);
+  const recipientAddress = await multisigContract.usedNonces(senderAccountAddress, verificationKeyAddress)
   return recipientAddress
 }
 
@@ -251,13 +211,10 @@ module.exports = {
   getAccountAddress,
   getAccount,
   createBlankCheck,
-  addItemToBlankCheck,
-  signBlankCheck,
   addSignerSignatureToBlankCheck,
   addCardSignatureToBlankCheck,
   redeemBlankCheck,
   decodeRedeemBlankCheckParameters,
-  getTransactionData,
   isBlankCheckRedeemed,
   createBlankCheckChosenPrivkey
 }
