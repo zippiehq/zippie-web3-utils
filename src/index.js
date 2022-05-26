@@ -26,6 +26,5 @@ module.exports = {
     token_erc721: require('./token_erc721'),
     wallet_v3: require('./wallet_v3'),
     wallet_v3_erc721: require('./wallet_v3_erc721'),
-    wallet_v3_abi_erc721: require('./contracts/zippieWalletErc721ContractAbi_v3'),
     utils: require('./utility'),
   }

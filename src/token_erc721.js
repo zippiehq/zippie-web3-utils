@@ -1,90 +1,74 @@
-const { erc721_abi } = require('./contracts/erc721ContractAbi')
+const ethers = require("ethers");
+
+const abi = [
+  // Read-Only Functions
+  "function balanceOf(address owner) view returns (uint256)",
+  "function ownerOf(uint256 tokenId) view returns (address)",
+  "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)",
+  "function isApprovedForAll(address owner, address operator) view returns (bool)",
+  "function symbol() view returns (string)",
+  "function name() view returns (string)",
+  "function tokenURI(uint256 tokenId) view returns (string)",
+
+  // Authenticated Functions
+  "function transferFrom(address from, address to, uint256 tokenId) returns (bool)",
+
+  // Events
+  "event Transfer(address indexed from, address indexed to, uint256 tokenId)",
+];
 
 function getTokenContract(web3, tokenAddress) {
-    return new web3.eth.Contract(erc721_abi, tokenAddress)
+  const provider = new ethers.providers.JsonRpcProvider(
+    "http://localhost:8545"
+  );
+  return new ethers.Contract(tokenAddress, abi, provider);
 }
 
-/**
- * 
- * @param {*} web3 
- * @param {*} accountAddress 
- * @param {*} tokenAddress 
- */
 async function getTokenBalance(web3, accountAddress, tokenAddress) {
-    const contract = getTokenContract(web3, tokenAddress)
-    const balance = await contract.methods.balanceOf(accountAddress).call()
+  const contract = getTokenContract(web3, tokenAddress);
+  const balance = await contract.balanceOf(accountAddress);
 
-    return balance
+  return balance;
 }
 
-/**
- * 
- * @param {*} web3 
- * @param {*} tokenAddress 
- * @param {*} tokenId 
- */
 async function getTokenOwner(web3, tokenAddress, tokenId) {
-  const contract = getTokenContract(web3, tokenAddress)
-  const owner = await contract.methods.ownerOf(tokenId).call()
-  return owner.toLowerCase()
+  const contract = getTokenContract(web3, tokenAddress);
+  const owner = await contract.ownerOf(tokenId);
+  return owner.toLowerCase();
 }
 
-/**
- * 
- * @param {*} web3 
- * @param {*} tokenAddress 
- * @param {*} accountAddress 
- * @param {*} index 
- */
 async function getTokenOfOwnerByIndex(web3, tokenAddress, accountAddress, index) {
-  const contract = getTokenContract(web3, tokenAddress)
-  const tokenId = await contract.methods.tokenOfOwnerByIndex(accountAddress, index).call()
-  return tokenId
+  const contract = getTokenContract(web3, tokenAddress);
+  const tokenId = await contract.tokenOfOwnerByIndex(accountAddress, index);
+  return tokenId;
 }
 
-
-/**
- * 
- * @param {*} web3 
- * @param {*} tokenAddress 
- * @param {*} accountAddress 
- * @param {*} contractAddress 
- */
 async function getTokenAllowance(web3, tokenAddress, accountAddress, contractAddress) {
-  const contract = getTokenContract(web3, tokenAddress)
-  const allowance = await contract.methods.isApprovedForAll(accountAddress, contractAddress).call()
-  return allowance
+  const contract = getTokenContract(web3, tokenAddress);
+  const allowance = await contract.isApprovedForAll(
+    accountAddress,
+    contractAddress
+  );
+  return allowance;
 }
 
-/**
- * 
- * @param {*} web3 
- * @param {*} tokenAddress 
- * @returns {address, name, symbol, decimals}
- */
 async function getTokenDetails(web3, tokenAddress) {
-  const erc721TokenContract = getTokenContract(web3, tokenAddress)
-  const name = await erc721TokenContract.methods.name().call()
-  const symbol = await erc721TokenContract.methods.symbol().call()
+  const contract = getTokenContract(web3, tokenAddress);
+  const name = await contract.name();
+  const symbol = await contract.symbol();
 
   return {
     address: tokenAddress,
-    name: name !== undefined ? name : 'Unknown',
-    symbol: symbol !== undefined ? symbol : 'ERC721',
-  }
+    name: name !== undefined ? name : "Unknown",
+    symbol: symbol !== undefined ? symbol : "ERC721",
+  };
 }
 
-/**
- * 
- * @param {*} web3 
- * @param {*} tokenAddress 
- * @returns {address, name, symbol, decimals}
- */
 async function getTokenURI(web3, tokenAddress, tokenId) {
-  const erc721TokenContract = getTokenContract(web3, tokenAddress)
-  const uri = await erc721TokenContract.methods.tokenURI(tokenId).call()
+  const contract = getTokenContract(web3, tokenAddress);
+  const uri = await contract.tokenURI(tokenId);
 
-  return uri
+  return uri;
 }
 
 module.exports = {
@@ -95,4 +79,4 @@ module.exports = {
   getTokenAllowance,
   getTokenDetails,
   getTokenURI,
-}
+};
