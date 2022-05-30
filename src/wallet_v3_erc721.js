@@ -49,7 +49,7 @@ const abi = [
   // Events
 ];
 
-function getAccountAddress(web3, signers, m, contractAddress) {
+function getAccountAddress(ethersProvider, signers, m, contractAddress) {
   // XXX can we get bytecode from chain instead or pass a param?
   const accountBytecode = "0x608060405234801561001057600080fd5b50600080546001600160a01b0319163317905560ff806100316000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063daea85c514602d575b600080fd5b605060048036036020811015604157600080fd5b50356001600160a01b03166052565b005b6000546001600160a01b03163314606857600080fd5b60408051600160e01b63a22cb4650281523360048201526001602482015290516001600160a01b0383169163a22cb46591604480830192600092919082900301818387803b15801560b857600080fd5b505af115801560cb573d6000803e3d6000fd5b503292505050fffea165627a7a72305820138a39f8dcc74909958a7c9a3debcc975c1b1527953c47473594aa49882499790029"
   const bytecodeHash = ethers.utils.keccak256(accountBytecode)
@@ -59,7 +59,7 @@ function getAccountAddress(web3, signers, m, contractAddress) {
 	return ethers.utils.getAddress(accountAddress)
 }
 
-function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddress) {
+function getAccount(ethersProvider, tokenAddress, contractAddress, signerAddress, cardAddress) {
   // Account no card
   let signers = [signerAddress]
   let m = [1, 1, 0, 0]
@@ -70,7 +70,7 @@ function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddr
     m = [1, 1, 1, 1]
   }
 
-  const accountAddress = getAccountAddress(web3, signers, m, contractAddress)
+  const accountAddress = getAccountAddress(ethersProvider, signers, m, contractAddress)
 
   const account = {
     accountAddress: accountAddress,
@@ -84,7 +84,7 @@ function getAccount(web3, tokenAddress, contractAddress, signerAddress, cardAddr
   return account
 }
 
-function createBlankCheck(web3, account, ledger, tokenAddress, tokenId, message, metadata) {
+function createBlankCheck(ethersProvider, account, ledger, tokenAddress, tokenId, message, metadata) {
   // Generate new unique verification key
   const verificationKey = ethers.Wallet.createRandom()
 
@@ -107,7 +107,7 @@ function createBlankCheck(web3, account, ledger, tokenAddress, tokenId, message,
   return blankCheck
 }
 
-function createBlankCheckChosenPrivkey(web3, account, ledger, tokenAddress, tokenId, message, metadata, verificationKey) {
+function createBlankCheckChosenPrivkey(ethersProvider, account, ledger, tokenAddress, tokenId, message, metadata, verificationKey) {
   const vKey = ethers.Wallet(verificationKey)
 
   // Create blank check hash to be signed by signers
@@ -139,7 +139,7 @@ function addCardSignatureToBlankCheck(blankCheck, nonce, r, s, v) {
   return blankCheck
 }
 
-async function redeemBlankCheck(web3, blankCheck, recipientAddress) {
+async function redeemBlankCheck(ethersProvider, blankCheck, recipientAddress) {
   // Destruct blankCheck obj
   const sender = blankCheck.multisigAccount
   const check = blankCheck.check
@@ -187,21 +187,19 @@ async function redeemBlankCheck(web3, blankCheck, recipientAddress) {
     }
   }
 
-  const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
-  const multisigContract = new ethers.Contract(sender.contractAddress, abi, provider);
+  const multisigContract = new ethers.Contract(sender.contractAddress, abi, ethersProvider);
   const redeemBlankCheckTx = await multisigContract.populateTransaction.redeemBlankCheck(addresses, signers, m, v, r, s, tokenId, cardNonces)
   return redeemBlankCheckTx.data
 }
 
-function decodeRedeemBlankCheckParameters(web3, redeemBlankCheckTx) {
+function decodeRedeemBlankCheckParameters(ethersProvider, redeemBlankCheckTx) {
   const iface = new ethers.utils.Interface(abi)
   const params = iface.decodeFunctionData("redeemBlankCheck", redeemBlankCheckTx)
   return params
 }
 
-async function isBlankCheckRedeemed(web3, contractAddress, senderAccountAddress, verificationKeyAddress) {
-  const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
-  const multisigContract = new ethers.Contract(contractAddress, abi, provider);
+async function isBlankCheckRedeemed(ethersProvider, contractAddress, senderAccountAddress, verificationKeyAddress) {
+  const multisigContract = new ethers.Contract(contractAddress, abi, ethersProvider);
   const recipientAddress = await multisigContract.usedNonces(senderAccountAddress, verificationKeyAddress)
   return recipientAddress
 }
