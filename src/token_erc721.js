@@ -25,7 +25,7 @@ async function getTokenBalance(ethersProvider, accountAddress, tokenAddress) {
   const contract = getTokenContract(ethersProvider, tokenAddress);
   const balance = await contract.balanceOf(accountAddress);
 
-  return balance;
+  return balance.toString();
 }
 
 async function getTokenOwner(ethersProvider, tokenAddress, tokenId) {
